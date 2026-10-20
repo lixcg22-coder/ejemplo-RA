@@ -1,0 +1,104 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Motocicleta en Realidad Aumentada</title>
+
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+    }
+
+    #aviso {
+      position: fixed;
+      top: 12px;
+      left: 12px;
+      right: 12px;
+      z-index: 10;
+      padding: 12px;
+      border-radius: 10px;
+      background: #153451;
+      color: white;
+      font: 16px Arial, sans-serif;
+      text-align: center;
+      pointer-events: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="aviso">Cargando realidad aumentada...</div>
+
+  <a-scene
+    mindar-image="imageTargetSrc: ./target.mind;"
+    color-space="sRGB"
+    renderer="colorManagement: true"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false"
+    loading-screen="enabled: false">
+
+    <a-assets>
+      <a-asset-item
+        id="modeloMotocicleta"
+        src="./motocicleta_3D.glb">
+      </a-asset-item>
+    </a-assets>
+
+    <a-camera
+      position="0 0 0"
+      look-controls="enabled: false">
+    </a-camera>
+
+    <a-entity
+      mindar-image-target="targetIndex: 0"
+      id="targetMotocicleta">
+
+      <a-entity
+        gltf-model="#modeloMotocicleta"
+        position="0 0 0.05"
+        rotation="0 0 0"
+        scale="0.5 0.5 0.5">
+      </a-entity>
+
+    </a-entity>
+
+    <a-light type="ambient" intensity="1.5"></a-light>
+
+    <a-light
+      type="directional"
+      intensity="1.2"
+      position="1 3 2">
+    </a-light>
+
+  </a-scene>
+
+  <script>
+    const aviso = document.getElementById("aviso");
+    const escena = document.querySelector("a-scene");
+    const target = document.getElementById("targetMotocicleta");
+
+    escena.addEventListener("arReady", () => {
+      aviso.textContent = "Apunta la cámara a la imagen de la motocicleta";
+    });
+
+    escena.addEventListener("arError", () => {
+      aviso.textContent = "No se pudo iniciar la cámara. Revisa los permisos.";
+    });
+
+    target.addEventListener("targetFound", () => {
+      aviso.textContent = "¡Motocicleta 3D detectada!";
+    });
+
+    target.addEventListener("targetLost", () => {
+      aviso.textContent = "Busca nuevamente la imagen";
+    });
+  </script>
+</body>
+</html>
+```
